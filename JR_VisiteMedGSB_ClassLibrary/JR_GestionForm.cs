@@ -76,8 +76,7 @@ namespace JR_VisiteMedGSB_ClassLibrary
             dataGrid.BorderStyle = BorderStyle.None;
             dataGrid.CellBorderStyle = DataGridViewCellBorderStyle.SingleVertical;
             dataGrid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dataGrid.ColumnHeadersHeight = 25;
-            dataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGrid.EnableHeadersVisualStyles = false;
             dataGrid.GridColor = System.Drawing.Color.Gainsboro;
             dataGrid.MultiSelect = false;
