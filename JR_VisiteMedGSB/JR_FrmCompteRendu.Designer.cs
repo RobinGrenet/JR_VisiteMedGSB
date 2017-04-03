@@ -32,7 +32,7 @@
             this.tctrlCompteRendu = new System.Windows.Forms.TabControl();
             this.tabConsultation = new System.Windows.Forms.TabPage();
             this.SplitContainerCompteRendu = new System.Windows.Forms.SplitContainer();
-            this.GbxListeVisiteur = new System.Windows.Forms.GroupBox();
+            this.GbxListeCompteRendu = new System.Windows.Forms.GroupBox();
             this.DtgListeCompteRendu = new System.Windows.Forms.DataGridView();
             this.PnlFicheDetail = new System.Windows.Forms.Panel();
             this.MCalCompteRendu = new System.Windows.Forms.MonthCalendar();
@@ -43,7 +43,7 @@
             this.SplitContainerCompteRendu.Panel1.SuspendLayout();
             this.SplitContainerCompteRendu.Panel2.SuspendLayout();
             this.SplitContainerCompteRendu.SuspendLayout();
-            this.GbxListeVisiteur.SuspendLayout();
+            this.GbxListeCompteRendu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DtgListeCompteRendu)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,7 +81,7 @@
             // 
             // SplitContainerCompteRendu.Panel1
             // 
-            this.SplitContainerCompteRendu.Panel1.Controls.Add(this.GbxListeVisiteur);
+            this.SplitContainerCompteRendu.Panel1.Controls.Add(this.GbxListeCompteRendu);
             // 
             // SplitContainerCompteRendu.Panel2
             // 
@@ -91,18 +91,18 @@
             this.SplitContainerCompteRendu.SplitterDistance = 351;
             this.SplitContainerCompteRendu.TabIndex = 3;
             // 
-            // GbxListeVisiteur
+            // GbxListeCompteRendu
             // 
-            this.GbxListeVisiteur.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.GbxListeCompteRendu.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.GbxListeVisiteur.Controls.Add(this.DtgListeCompteRendu);
-            this.GbxListeVisiteur.Location = new System.Drawing.Point(3, 3);
-            this.GbxListeVisiteur.Name = "GbxListeVisiteur";
-            this.GbxListeVisiteur.Size = new System.Drawing.Size(345, 579);
-            this.GbxListeVisiteur.TabIndex = 1;
-            this.GbxListeVisiteur.TabStop = false;
-            this.GbxListeVisiteur.Text = "Nombre de visiteur : ";
+            this.GbxListeCompteRendu.Controls.Add(this.DtgListeCompteRendu);
+            this.GbxListeCompteRendu.Location = new System.Drawing.Point(3, 3);
+            this.GbxListeCompteRendu.Name = "GbxListeCompteRendu";
+            this.GbxListeCompteRendu.Size = new System.Drawing.Size(345, 579);
+            this.GbxListeCompteRendu.TabIndex = 1;
+            this.GbxListeCompteRendu.TabStop = false;
+            this.GbxListeCompteRendu.Text = "Nombre de rapports : ";
             // 
             // DtgListeCompteRendu
             // 
@@ -156,7 +156,7 @@
             this.SplitContainerCompteRendu.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SplitContainerCompteRendu)).EndInit();
             this.SplitContainerCompteRendu.ResumeLayout(false);
-            this.GbxListeVisiteur.ResumeLayout(false);
+            this.GbxListeCompteRendu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.DtgListeCompteRendu)).EndInit();
             this.ResumeLayout(false);
 
@@ -168,7 +168,7 @@
         private System.Windows.Forms.TabPage tabConsultation;
         private System.Windows.Forms.TabPage tabMiseAJour;
         private System.Windows.Forms.SplitContainer SplitContainerCompteRendu;
-        private System.Windows.Forms.GroupBox GbxListeVisiteur;
+        private System.Windows.Forms.GroupBox GbxListeCompteRendu;
         private System.Windows.Forms.DataGridView DtgListeCompteRendu;
         private System.Windows.Forms.Panel PnlFicheDetail;
         private System.Windows.Forms.MonthCalendar MCalCompteRendu;

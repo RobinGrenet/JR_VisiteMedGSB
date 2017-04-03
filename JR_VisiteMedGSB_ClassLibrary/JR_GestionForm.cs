@@ -70,6 +70,8 @@ namespace JR_VisiteMedGSB_ClassLibrary
             dataGrid.RowsDefaultCellStyle = RowsCellStyle;
 
             dataGrid.AllowUserToAddRows = false;
+            dataGrid.AllowUserToDeleteRows = false;
+            dataGrid.AllowUserToResizeRows = false;
             dataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGrid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             dataGrid.BackgroundColor = Color.White;
@@ -81,6 +83,7 @@ namespace JR_VisiteMedGSB_ClassLibrary
             dataGrid.GridColor = System.Drawing.Color.Gainsboro;
             dataGrid.MultiSelect = false;
             dataGrid.RowHeadersVisible = false;
+            dataGrid.ReadOnly = true;
             dataGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
     }
