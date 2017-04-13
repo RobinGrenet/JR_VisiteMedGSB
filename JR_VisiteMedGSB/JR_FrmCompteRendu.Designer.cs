@@ -31,18 +31,13 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JR_FrmCompteRendu));
             this.tctrlCompteRendu = new System.Windows.Forms.TabControl();
             this.tabConsultation = new System.Windows.Forms.TabPage();
-            this.SplitContainerCompteRendu = new System.Windows.Forms.SplitContainer();
+            this.BtnActualiser = new System.Windows.Forms.Button();
+            this.MCalCompteRendu = new System.Windows.Forms.MonthCalendar();
             this.GbxListeCompteRendu = new System.Windows.Forms.GroupBox();
             this.DtgListeCompteRendu = new System.Windows.Forms.DataGridView();
-            this.PnlFicheDetail = new System.Windows.Forms.Panel();
-            this.MCalCompteRendu = new System.Windows.Forms.MonthCalendar();
             this.tabMiseAJour = new System.Windows.Forms.TabPage();
             this.tctrlCompteRendu.SuspendLayout();
             this.tabConsultation.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.SplitContainerCompteRendu)).BeginInit();
-            this.SplitContainerCompteRendu.Panel1.SuspendLayout();
-            this.SplitContainerCompteRendu.Panel2.SuspendLayout();
-            this.SplitContainerCompteRendu.SuspendLayout();
             this.GbxListeCompteRendu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DtgListeCompteRendu)).BeginInit();
             this.SuspendLayout();
@@ -62,7 +57,9 @@
             // 
             // tabConsultation
             // 
-            this.tabConsultation.Controls.Add(this.SplitContainerCompteRendu);
+            this.tabConsultation.Controls.Add(this.BtnActualiser);
+            this.tabConsultation.Controls.Add(this.MCalCompteRendu);
+            this.tabConsultation.Controls.Add(this.GbxListeCompteRendu);
             this.tabConsultation.Location = new System.Drawing.Point(4, 22);
             this.tabConsultation.Name = "tabConsultation";
             this.tabConsultation.Padding = new System.Windows.Forms.Padding(3);
@@ -71,25 +68,29 @@
             this.tabConsultation.Text = "Consultation";
             this.tabConsultation.UseVisualStyleBackColor = true;
             // 
-            // SplitContainerCompteRendu
+            // BtnActualiser
             // 
-            this.SplitContainerCompteRendu.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.SplitContainerCompteRendu.Location = new System.Drawing.Point(6, 5);
-            this.SplitContainerCompteRendu.Name = "SplitContainerCompteRendu";
+            this.BtnActualiser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnActualiser.BackColor = System.Drawing.Color.SkyBlue;
+            this.BtnActualiser.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnActualiser.Font = new System.Drawing.Font("Lucida Sans", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnActualiser.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.BtnActualiser.Location = new System.Drawing.Point(722, 520);
+            this.BtnActualiser.Name = "BtnActualiser";
+            this.BtnActualiser.Size = new System.Drawing.Size(227, 59);
+            this.BtnActualiser.TabIndex = 2;
+            this.BtnActualiser.Text = "Actualiser";
+            this.BtnActualiser.UseVisualStyleBackColor = false;
+            this.BtnActualiser.Click += new System.EventHandler(this.BtnRafraichir_Click);
             // 
-            // SplitContainerCompteRendu.Panel1
+            // MCalCompteRendu
             // 
-            this.SplitContainerCompteRendu.Panel1.Controls.Add(this.GbxListeCompteRendu);
-            // 
-            // SplitContainerCompteRendu.Panel2
-            // 
-            this.SplitContainerCompteRendu.Panel2.Controls.Add(this.PnlFicheDetail);
-            this.SplitContainerCompteRendu.Panel2.Controls.Add(this.MCalCompteRendu);
-            this.SplitContainerCompteRendu.Size = new System.Drawing.Size(949, 585);
-            this.SplitContainerCompteRendu.SplitterDistance = 351;
-            this.SplitContainerCompteRendu.TabIndex = 3;
+            this.MCalCompteRendu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.MCalCompteRendu.Location = new System.Drawing.Point(722, 12);
+            this.MCalCompteRendu.MaxSelectionCount = 31;
+            this.MCalCompteRendu.Name = "MCalCompteRendu";
+            this.MCalCompteRendu.TabIndex = 0;
+            this.MCalCompteRendu.DateChanged += new System.Windows.Forms.DateRangeEventHandler(this.MCalCompteRendu_DateChanged);
             // 
             // GbxListeCompteRendu
             // 
@@ -97,9 +98,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.GbxListeCompteRendu.Controls.Add(this.DtgListeCompteRendu);
-            this.GbxListeCompteRendu.Location = new System.Drawing.Point(3, 3);
+            this.GbxListeCompteRendu.Location = new System.Drawing.Point(6, 6);
             this.GbxListeCompteRendu.Name = "GbxListeCompteRendu";
-            this.GbxListeCompteRendu.Size = new System.Drawing.Size(345, 579);
+            this.GbxListeCompteRendu.Size = new System.Drawing.Size(704, 579);
             this.GbxListeCompteRendu.TabIndex = 1;
             this.GbxListeCompteRendu.TabStop = false;
             this.GbxListeCompteRendu.Text = "Nombre de rapports : ";
@@ -112,21 +113,9 @@
             this.DtgListeCompteRendu.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DtgListeCompteRendu.Location = new System.Drawing.Point(6, 19);
             this.DtgListeCompteRendu.Name = "DtgListeCompteRendu";
-            this.DtgListeCompteRendu.Size = new System.Drawing.Size(333, 554);
+            this.DtgListeCompteRendu.Size = new System.Drawing.Size(692, 554);
             this.DtgListeCompteRendu.TabIndex = 1;
-            // 
-            // PnlFicheDetail
-            // 
-            this.PnlFicheDetail.Location = new System.Drawing.Point(3, 183);
-            this.PnlFicheDetail.Name = "PnlFicheDetail";
-            this.PnlFicheDetail.Size = new System.Drawing.Size(588, 399);
-            this.PnlFicheDetail.TabIndex = 1;
-            // 
-            // MCalCompteRendu
-            // 
-            this.MCalCompteRendu.Location = new System.Drawing.Point(9, 9);
-            this.MCalCompteRendu.Name = "MCalCompteRendu";
-            this.MCalCompteRendu.TabIndex = 0;
+            this.DtgListeCompteRendu.DataSourceChanged += new System.EventHandler(this.DtgListeCompteRendu_DataSourceChanged);
             // 
             // tabMiseAJour
             // 
@@ -147,15 +136,11 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "JR_FrmCompteRendu";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Compte-rendus d\'interventions";
+            this.Text = "Comptes rendus des interventions";
             this.Activated += new System.EventHandler(this.JR_FrmCompteRendu_Activated);
             this.Load += new System.EventHandler(this.JR_FrmCompteRendu_Load);
             this.tctrlCompteRendu.ResumeLayout(false);
             this.tabConsultation.ResumeLayout(false);
-            this.SplitContainerCompteRendu.Panel1.ResumeLayout(false);
-            this.SplitContainerCompteRendu.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.SplitContainerCompteRendu)).EndInit();
-            this.SplitContainerCompteRendu.ResumeLayout(false);
             this.GbxListeCompteRendu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.DtgListeCompteRendu)).EndInit();
             this.ResumeLayout(false);
@@ -167,10 +152,9 @@
         private System.Windows.Forms.TabControl tctrlCompteRendu;
         private System.Windows.Forms.TabPage tabConsultation;
         private System.Windows.Forms.TabPage tabMiseAJour;
-        private System.Windows.Forms.SplitContainer SplitContainerCompteRendu;
         private System.Windows.Forms.GroupBox GbxListeCompteRendu;
         private System.Windows.Forms.DataGridView DtgListeCompteRendu;
-        private System.Windows.Forms.Panel PnlFicheDetail;
         private System.Windows.Forms.MonthCalendar MCalCompteRendu;
+        private System.Windows.Forms.Button BtnActualiser;
     }
 }

@@ -41,16 +41,21 @@ namespace JR_VisiteMedGSB_ClassLibrary
 
         public static Boolean connexionBD()
         {
-            JR_ProcedureStock.connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString);
+            if (JR_ProcedureStock.connexion == null)
+            {
+                JR_ProcedureStock.connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString);
+            }
             JR_ProcedureStock.connexion.Open();
-
             return JR_ProcedureStock.connexion.State == ConnectionState.Open;
         }
 
         public static Boolean connexionBD(out String erreur)
         {
             erreur = null;
-            JR_ProcedureStock.connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString);
+            if (JR_ProcedureStock.connexion == null)
+            {
+                JR_ProcedureStock.connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString);
+            }
             try
             {
                 JR_ProcedureStock.connexion.Open();
@@ -59,12 +64,16 @@ namespace JR_VisiteMedGSB_ClassLibrary
             {
                 erreur = e.Message;
             }
+
             return JR_ProcedureStock.connexion.State == ConnectionState.Open;
         }
 
         public static void deconnexionBD()
         {
-            JR_ProcedureStock.connexion.Close();
+            if (JR_ProcedureStock.connexion != null)
+            {
+                JR_ProcedureStock.connexion.Close();
+            }
         }
 
         public static DataTable ExecToDatatable(String nomProc)
@@ -92,6 +101,39 @@ namespace JR_VisiteMedGSB_ClassLibrary
                 using (SqlCommand commande = new SqlCommand(nomProc, JR_ProcedureStock.connexion))
                 {
                     commande.CommandType = CommandType.StoredProcedure;
+                    try
+                    {
+                        using (SqlDataReader reader = commande.ExecuteReader())
+                        {
+                            dtResultat.Load(reader);
+                        }
+                    }
+                    catch (SqlException e)
+                    {
+                        if (erreur == null)
+                        {
+                            erreur = e.Message;
+                        }
+                        else
+                        {
+                            erreur += "\n" + e.Message;
+                        }
+                    }
+                }
+            }
+            return dtResultat;
+        }
+
+        public static DataTable ExecToDatatable(String nomProc, KeyValuePair<String, DateTime> dateDebut, KeyValuePair<String, DateTime> dateFin, ref String erreur)
+        {
+            DataTable dtResultat = new DataTable();
+            if (JR_ProcedureStock.connexion.State == ConnectionState.Open)
+            {
+                using (SqlCommand commande = new SqlCommand(nomProc, JR_ProcedureStock.connexion))
+                {
+                    commande.CommandType = CommandType.StoredProcedure;
+                    commande.Parameters.Add(dateDebut.Key, SqlDbType.Date).Value = dateDebut.Value;
+                    commande.Parameters.Add(dateFin.Key, SqlDbType.Date).Value = dateFin.Value;
                     try
                     {
                         using (SqlDataReader reader = commande.ExecuteReader())
@@ -143,7 +185,7 @@ namespace JR_VisiteMedGSB_ClassLibrary
                     }
                     catch (SqlException e)
                     {
-                        if (erreur == String.Empty)
+                        if (erreur == null)
                         {
                             erreur = e.Message;
                         }
