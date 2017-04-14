@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CircularProgressControl">
+      <HintPath>C:\Users\grenetr\Desktop\CircularProgressControl\CircularProgressControl\bin\Debug\CircularProgressControl.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />

@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CircularProgressControl">
+      <HintPath>C:\Users\grenetr\Desktop\CircularProgressControl\CircularProgressControl\bin\Debug\CircularProgressControl.dll</HintPath>
+    </Reference>
     <Reference Include="JR_VisiteMedGSB_ClassLibrary">
       <HintPath>..\JR_VisiteMedGSB_ClassLibrary\bin\Debug\JR_VisiteMedGSB_ClassLibrary.dll</HintPath>
     </Reference>

@@ -18,7 +18,8 @@ namespace JR_VisiteMedGSB
             InitializeComponent();
         }
 
-        private void JR_FrmCompteRendu_Load(object sender, EventArgs e)
+        #region Procédures évènementielles
+        private async void JR_FrmCompteRendu_Load(object sender, EventArgs e)
         {
             #region Modification de propriété
             JR_GestionForm.ModificationProprieteCommune(this);
@@ -33,21 +34,20 @@ namespace JR_VisiteMedGSB
             #endregion
 
             #region Chargement de la DtgListeCompteRendu
-            String erreur;
-
+            JR_GestionForm.DebutChargement(ProgressControlVisiteur, LblChargement, "Chargement de la liste des rapports...");
+            LblErreur.Visible = false;
             try
             {
-                JR_ProcedureStock.connexionBD(out erreur);
-                DtgListeCompteRendu.DataSource = JR_ProcedureStock.ExecToDatatable("PS_ListeCompteRendu", ref erreur);
+                DtgListeCompteRendu.DataSource = await JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRendu");
+            }
+            catch (Exception ex)
+            {
+                LblErreur.Text = ex.Message;
+                LblErreur.Visible = true;
             }
             finally
             {
-                JR_ProcedureStock.deconnexionBD();
-            }
-
-            if (erreur != null)
-            {
-                MessageBox.Show(erreur, "Erreur lors de la récupération des comptes rendus", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                JR_GestionForm.FinChargement(ProgressControlVisiteur, LblChargement);
             }
             #endregion
 
@@ -62,24 +62,27 @@ namespace JR_VisiteMedGSB
             JR_GestionForm.SelectionOngletActif(JR_FrmPrincipal.TabFrmCompteRendu, tctrlCompteRendu);
         }
 
-        private void MCalCompteRendu_DateChanged(object sender, DateRangeEventArgs e)
+        private async void MCalCompteRendu_DateChanged(object sender, DateRangeEventArgs e)
         {
-            String erreur;
+            JR_GestionForm.DebutChargement(ProgressControlVisiteur, LblChargement, "Chargement de la liste des rapports...");
+
             KeyValuePair<String, DateTime> paramDateDebut = new KeyValuePair<string, DateTime>("DateDebut", e.Start);
             KeyValuePair<String, DateTime> paramDateFin = new KeyValuePair<string, DateTime>("DateFin", e.End);
+
+            LblErreur.Visible = false;
+
             try
             {
-                JR_ProcedureStock.connexionBD(out erreur);
-                DtgListeCompteRendu.DataSource = JR_ProcedureStock.ExecToDatatable("PS_ListeCompteRenduDate", paramDateDebut, paramDateFin, ref erreur);
+                DtgListeCompteRendu.DataSource = await JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRenduDate", paramDateDebut, paramDateFin);
+            }
+            catch (Exception ex)
+            {
+                LblErreur.Text = ex.Message;
+                LblErreur.Visible = true;
             }
             finally
             {
-                JR_ProcedureStock.deconnexionBD();
-            }
-
-            if (erreur != null)
-            {
-                MessageBox.Show(erreur, "Erreur de récupération des comptes rendus entre le " + e.Start.ToString("dd/MM/yyyy") + " et le " + e.End.ToString("dd/MM/yyyy"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                JR_GestionForm.FinChargement(ProgressControlVisiteur, LblChargement);
             }
         }
 
@@ -88,26 +91,24 @@ namespace JR_VisiteMedGSB
             GbxListeCompteRendu.Text = "Nombre de rapports : " + DtgListeCompteRendu.RowCount;
         }
 
-        private void BtnRafraichir_Click(object sender, EventArgs e)
+        private async void BtnRafraichir_Click(object sender, EventArgs e)
         {
-            #region Chargement de la DtgListeCompteRendu
-            String erreur;
-
+            JR_GestionForm.DebutChargement(ProgressControlVisiteur, LblChargement, "Chargement de la liste des rapports...");
+            LblErreur.Visible = false;
             try
             {
-                JR_ProcedureStock.connexionBD(out erreur);
-                DtgListeCompteRendu.DataSource = JR_ProcedureStock.ExecToDatatable("PS_ListeCompteRendu", ref erreur);
+                DtgListeCompteRendu.DataSource = await JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRendu");
+            }
+            catch (Exception ex)
+            {
+                LblErreur.Text = ex.Message;
+                LblErreur.Visible = true;
             }
             finally
             {
-                JR_ProcedureStock.deconnexionBD();
+                JR_GestionForm.FinChargement(ProgressControlVisiteur, LblChargement);
             }
-
-            if (erreur != null)
-            {
-                MessageBox.Show(erreur, "Erreur lors de la récupération des comptes rendus", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-            #endregion
-        }
+        } 
+        #endregion
     }
 }

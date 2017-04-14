@@ -30,6 +30,7 @@ namespace JR_VisiteMedGSB_ClassLibrary
                     break;
             }
         }
+
         /// <summary>
         /// Permet la modification des propriétés communes aux formulaires enfants
         /// </summary>
@@ -85,6 +86,33 @@ namespace JR_VisiteMedGSB_ClassLibrary
             dataGrid.RowHeadersVisible = false;
             dataGrid.ReadOnly = true;
             dataGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        }
+
+        public static void DebutChargement(CircularProgressControl.CircularProgressControl progressControl, Label label, String message = "Chargement...")
+        {
+            if (progressControl != null)
+            {
+                progressControl.Start();
+                progressControl.Visible = true;
+            }
+            if (label != null)
+            {
+                label.Text = message;
+                label.Visible = true;
+            }
+        }
+
+        public static void FinChargement(CircularProgressControl.CircularProgressControl progressControl, Label label)
+        {
+            if (progressControl != null)
+            {
+                progressControl.Stop();
+                progressControl.Visible = false;
+            }
+            if (label != null)
+            {
+                label.Visible = false;
+            }
         }
     }
 }

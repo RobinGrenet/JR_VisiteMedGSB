@@ -12,11 +12,14 @@ namespace JR_VisiteMedGSB_ClassLibrary
 {
     public static class JR_ProcedureStock
     {
-        #region Attributs
-        private static SqlConnection connexion;
+        #region Messages d'erreur
+        private const String erreurRequete = "Erreur lors de l'exécution de la requête : ";
+        private const String erreurConnexion = "Erreur lors de la connexion au serveur de base de données : "; 
         #endregion
 
-        #region Méthodes
+        /// <summary>
+        /// Créé la chaîne de connexion pour SQL Server et enregistre la chaîne dans le fichier de configuration
+        /// </summary>
         public static void CreerChaineConnexion()
         {
             // Fichier de configuration
@@ -39,68 +42,21 @@ namespace JR_VisiteMedGSB_ClassLibrary
             ConfigurationManager.RefreshSection("connectionStrings");
         }
 
-        public static Boolean connexionBD()
-        {
-            if (JR_ProcedureStock.connexion == null)
-            {
-                JR_ProcedureStock.connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString);
-            }
-            JR_ProcedureStock.connexion.Open();
-            return JR_ProcedureStock.connexion.State == ConnectionState.Open;
-        }
-
-        public static Boolean connexionBD(out String erreur)
-        {
-            erreur = null;
-            if (JR_ProcedureStock.connexion == null)
-            {
-                JR_ProcedureStock.connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString);
-            }
-            try
-            {
-                JR_ProcedureStock.connexion.Open();
-            }
-            catch (SqlException e)
-            {
-                erreur = e.Message;
-            }
-
-            return JR_ProcedureStock.connexion.State == ConnectionState.Open;
-        }
-
-        public static void deconnexionBD()
-        {
-            if (JR_ProcedureStock.connexion != null)
-            {
-                JR_ProcedureStock.connexion.Close();
-            }
-        }
-
+        /// <summary>
+        /// Exécute la procédure stockée et retoune le résultat dans une DataTable
+        /// </summary>
+        /// <param name="nomProc">le nom de la procédure stockée</param>
+        /// <returns>une DataTable contenant le résultat de la requête</returns>
         public static DataTable ExecToDatatable(String nomProc)
         {
             DataTable dtResultat = new DataTable();
-            if (JR_ProcedureStock.connexion.State == ConnectionState.Open)
+            using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
+            using (SqlCommand commande = new SqlCommand(nomProc, connexion))
             {
-                using (SqlCommand commande = new SqlCommand(nomProc, JR_ProcedureStock.connexion))
+                commande.CommandType = CommandType.StoredProcedure;
+                try
                 {
-                    commande.CommandType = CommandType.StoredProcedure;
-                    using (SqlDataReader reader = commande.ExecuteReader())
-                    {
-                        dtResultat.Load(reader);
-                    }
-                }
-            }
-            return dtResultat;
-        }
-
-        public static DataTable ExecToDatatable(String nomProc, ref String erreur)
-        {
-            DataTable dtResultat = new DataTable();
-            if (JR_ProcedureStock.connexion.State == ConnectionState.Open)
-            {
-                using (SqlCommand commande = new SqlCommand(nomProc, JR_ProcedureStock.connexion))
-                {
-                    commande.CommandType = CommandType.StoredProcedure;
+                    connexion.Open();
                     try
                     {
                         using (SqlDataReader reader = commande.ExecuteReader())
@@ -110,30 +66,36 @@ namespace JR_VisiteMedGSB_ClassLibrary
                     }
                     catch (SqlException e)
                     {
-                        if (erreur == null)
-                        {
-                            erreur = e.Message;
-                        }
-                        else
-                        {
-                            erreur += "\n" + e.Message;
-                        }
+                        throw new Exception(erreurRequete + e.Message, e);
                     }
+                }
+                catch (SqlException e)
+                {
+                    throw new Exception(erreurConnexion + e.Message, e);
                 }
             }
             return dtResultat;
         }
 
-        public static DataTable ExecToDatatable(String nomProc, KeyValuePair<String, DateTime> dateDebut, KeyValuePair<String, DateTime> dateFin, ref String erreur)
+        /// <summary>
+        /// Exécute la procédure stockée et retoune le résultat dans une DataTable, en passant en argument la date de début et de fin
+        /// </summary>
+        /// <param name="nomProc">le nom de la procédure stockée</param>
+        /// <param name="dateDebut">la date de début</param>
+        /// <param name="dateFin">la date de fin</param>
+        /// <returns>une DataTable contenant le résultat de la requête</returns>
+        public static DataTable ExecToDatatable(String nomProc, KeyValuePair<String, DateTime> dateDebut, KeyValuePair<String, DateTime> dateFin)
         {
             DataTable dtResultat = new DataTable();
-            if (JR_ProcedureStock.connexion.State == ConnectionState.Open)
+            using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
+            using (SqlCommand commande = new SqlCommand(nomProc, connexion))
             {
-                using (SqlCommand commande = new SqlCommand(nomProc, JR_ProcedureStock.connexion))
+                commande.CommandType = CommandType.StoredProcedure;
+                commande.Parameters.Add(dateDebut.Key, SqlDbType.Date).Value = dateDebut.Value;
+                commande.Parameters.Add(dateFin.Key, SqlDbType.Date).Value = dateFin.Value;
+                try
                 {
-                    commande.CommandType = CommandType.StoredProcedure;
-                    commande.Parameters.Add(dateDebut.Key, SqlDbType.Date).Value = dateDebut.Value;
-                    commande.Parameters.Add(dateFin.Key, SqlDbType.Date).Value = dateFin.Value;
+                    connexion.Open();
                     try
                     {
                         using (SqlDataReader reader = commande.ExecuteReader())
@@ -143,57 +105,150 @@ namespace JR_VisiteMedGSB_ClassLibrary
                     }
                     catch (SqlException e)
                     {
-                        if (erreur == null)
-                        {
-                            erreur = e.Message;
-                        }
-                        else
-                        {
-                            erreur += "\n" + e.Message;
-                        }
+                        throw new Exception(erreurRequete + e.Message, e);
                     }
+                }
+                catch (SqlException e)
+                {
+                    throw new Exception(erreurConnexion + e.Message, e);
                 }
             }
             return dtResultat;
         }
 
-        public static String ExecScalar(String nomProc)
+        /// <summary>
+        /// Une version asynchrone de ExecToDatatable() qui exécute la procédure stockée et retoune le résultat dans une DataTable
+        /// </summary>
+        /// <param name="nomProc">le nom de la procédure stockée</param>
+        /// <returns>une tâche pouvant être attendue contenant une DataTable</returns>
+        public async static Task<DataTable> ExecToDatatableAsync(String nomProc)
         {
-            String resultat = String.Empty;
-            if (JR_ProcedureStock.connexion.State == ConnectionState.Open)
+            DataTable dtResultat = new DataTable();
+            using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
+            using (SqlCommand commande = new SqlCommand(nomProc, connexion))
             {
-                using (SqlCommand commande = new SqlCommand(nomProc, JR_ProcedureStock.connexion))
+                commande.CommandType = CommandType.StoredProcedure;
+                try
                 {
-                    commande.CommandType = CommandType.StoredProcedure;
-                    resultat = commande.ExecuteScalar().ToString();
+                    await connexion.OpenAsync();
+                    try
+                    {
+                        using (SqlDataReader reader = await commande.ExecuteReaderAsync())
+                        {
+                            await Task.Run(() => dtResultat.Load(reader));
+                        }
+                    }
+                    catch (SqlException e)
+                    {
+                        throw new Exception(erreurRequete + e.Message, e);
+                    }
+                }
+                catch (SqlException e)
+                {
+                    throw new Exception(erreurConnexion + e.Message, e);
+                }
+            }
+            return dtResultat;
+        }
+
+        /// <summary>
+        /// Une version asynchrone de ExecToDatatable() qui exécute la procédure stockée et retoune le résultat dans une DataTable, en passant en argument la date de début et de fin
+        /// </summary>
+        /// <param name="nomProc">le nom de la procédure stockée</param>
+        /// <param name="dateDebut">la date de début</param>
+        /// <param name="dateFin">la date de fin<</param>
+        /// <returns>une tâche pouvant être attendue contenant une DataTable</returns>
+        public async static Task<DataTable> ExecToDatatableAsync(String nomProc, KeyValuePair<String, DateTime> dateDebut, KeyValuePair<String, DateTime> dateFin)
+        {
+            DataTable dtResultat = new DataTable();
+            using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
+            using (SqlCommand commande = new SqlCommand(nomProc, connexion))
+            {
+                commande.CommandType = CommandType.StoredProcedure;
+                commande.Parameters.Add(dateDebut.Key, SqlDbType.Date).Value = dateDebut.Value;
+                commande.Parameters.Add(dateFin.Key, SqlDbType.Date).Value = dateFin.Value;
+                try
+                {
+                    await connexion.OpenAsync();
+                    try
+                    {
+                        using (SqlDataReader reader = commande.ExecuteReader())
+                        {
+                            await Task.Run(() => dtResultat.Load(reader));
+                        }
+                    }
+                    catch (SqlException e)
+                    {
+                        throw new Exception(erreurRequete + e.Message, e);
+                    }
+                }
+                catch (SqlException e)
+                {
+                    throw new Exception(erreurConnexion + e.Message, e);
+                }
+            }
+            return dtResultat;
+        }
+        
+        /// <summary>
+        /// Exécute la procédure stockée et retourne un résultat unique
+        /// </summary>
+        /// <param name="nomProc">le nom de la procédure stockée</param>
+        /// <returns>un objet contenant le résultat de la requête</returns>
+        public static Object ExecScalar(String nomProc)
+        {
+            Object resultat = new Object();
+            using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
+            using (SqlCommand commande = new SqlCommand(nomProc, connexion))
+            {
+                commande.CommandType = CommandType.StoredProcedure;
+                try
+                {
+                    connexion.Open();
+                    try
+                    {
+                        resultat = commande.ExecuteScalar();
+                    }
+                    catch (SqlException e)
+                    {
+                        throw new Exception(erreurRequete + e.Message, e);
+                    }
+                }
+                catch (SqlException e)
+                {
+                    throw new Exception(erreurConnexion + e.Message, e);
                 }
             }
             return resultat;
         }
 
-        public static String ExecScalar(String nomProc, ref String erreur)
+        /// <summary>
+        /// Une version asynchrone de ExecScalar qui exécute la procédure stockée et retourne un résultat unique
+        /// </summary>
+        /// <param name="nomProc">le nom de la procédure stockée</param>
+        /// <returns>une tâche pouvant être attendue contenant un objet</returns>
+        public async static Task<Object> ExecScalarAsync(String nomProc)
         {
-            String resultat = String.Empty;
-            if (JR_ProcedureStock.connexion.State == ConnectionState.Open)
+            Object resultat = new Object();
+            using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
+            using (SqlCommand commande = new SqlCommand(nomProc, connexion))
             {
-                using (SqlCommand commande = new SqlCommand(nomProc, JR_ProcedureStock.connexion))
+                commande.CommandType = CommandType.StoredProcedure;
+                try
                 {
-                    commande.CommandType = CommandType.StoredProcedure;
+                    await connexion.OpenAsync();
                     try
                     {
-                        resultat = commande.ExecuteScalar().ToString();
+                        resultat = await commande.ExecuteScalarAsync();
                     }
                     catch (SqlException e)
                     {
-                        if (erreur == null)
-                        {
-                            erreur = e.Message;
-                        }
-                        else
-                        {
-                            erreur += "\n" + e.Message;
-                        }
+                        throw new Exception(erreurRequete + e.Message, e);
                     }
+                }
+                catch (SqlException e)
+                {
+                    throw new Exception(erreurConnexion + e.Message, e);
                 }
             }
             return resultat;
@@ -202,16 +257,55 @@ namespace JR_VisiteMedGSB_ClassLibrary
         public static int Exec(String nomProc)
         {
             int nbLignes = 0;
-            if (JR_ProcedureStock.connexion.State == ConnectionState.Open)
+            using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
+            using (SqlCommand commande = new SqlCommand(nomProc, connexion))
             {
-                using (SqlCommand commande = new SqlCommand(nomProc, JR_ProcedureStock.connexion))
+                commande.CommandType = CommandType.StoredProcedure;
+                try
                 {
-                    commande.CommandType = CommandType.StoredProcedure;
-                    nbLignes = commande.ExecuteNonQuery();
+                    connexion.Open();
+                    try
+                    {
+                        nbLignes = commande.ExecuteNonQuery();
+                    }
+                    catch (SqlException e)
+                    {
+                        throw new Exception(erreurRequete + e.Message, e);
+                    }
+                }
+                catch (SqlException e)
+                {
+                    throw new Exception(erreurConnexion + e.Message, e);
                 }
             }
             return nbLignes;
-        } 
-        #endregion
+        }
+
+        public async static Task<int> ExecAsync(String nomProc)
+        {
+            int nbLignes = 0;
+            using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
+            using (SqlCommand commande = new SqlCommand(nomProc, connexion))
+            {
+                commande.CommandType = CommandType.StoredProcedure;
+                try
+                {
+                    await connexion.OpenAsync();
+                    try
+                    {
+                        nbLignes = await commande.ExecuteNonQueryAsync();
+                    }
+                    catch (SqlException e)
+                    {
+                        throw new Exception(erreurRequete + e.Message, e);
+                    }
+                }
+                catch (SqlException e)
+                {
+                    throw new Exception(erreurConnexion + e.Message, e);
+                }
+            }
+            return nbLignes;
+        }
     }
 }
