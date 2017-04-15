@@ -138,7 +138,7 @@ namespace JR_VisiteMedGSB_ClassLibrary
                     {
                         using (SqlDataReader reader = await commande.ExecuteReaderAsync(jetonAnnulation))
                         {
-                            await Task.Run(() => dtResultat.Load(reader));
+                            await Task.Run(() => dtResultat.Load(reader), jetonAnnulation);
                         }
                     }
                     catch (SqlException e)
@@ -179,7 +179,7 @@ namespace JR_VisiteMedGSB_ClassLibrary
                     {
                         using (SqlDataReader reader = await commande.ExecuteReaderAsync(jetonAnnulation))
                         {
-                            await Task.Run(() => dtResultat.Load(reader));
+                            await Task.Run(() => dtResultat.Load(reader), jetonAnnulation);
                         }
                     }
                     catch (SqlException e)
@@ -259,6 +259,11 @@ namespace JR_VisiteMedGSB_ClassLibrary
             return resultat;
         }
 
+        /// <summary>
+        /// Exécute la procédure stockée et retourne le nombre de lignes affectées
+        /// </summary>
+        /// <param name="nomProc">le nom de la procédure stockée</param>
+        /// <returns>le nombre de lignes affectées</returns>
         public static int Exec(String nomProc)
         {
             int nbLignes = 0;
@@ -286,6 +291,11 @@ namespace JR_VisiteMedGSB_ClassLibrary
             return nbLignes;
         }
 
+        /// <summary>
+        /// Une version asynchrone de Exec qui exécute la procédure stockée et retourne le nombre de lignes affectées
+        /// </summary>
+        /// <param name="nomProc">le nom de la procédure stockée</param>
+        /// <returns>une tâche pouvant être attendue contenant un entier</returns>
         public async static Task<int> ExecAsync(String nomProc)
         {
             int nbLignes = 0;

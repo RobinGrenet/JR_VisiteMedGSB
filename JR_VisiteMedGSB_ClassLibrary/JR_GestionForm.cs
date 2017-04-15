@@ -90,13 +90,20 @@ namespace JR_VisiteMedGSB_ClassLibrary
 
         private static int CompteurChargementActif = 0;
 
-        public static void DebutChargement(CircularProgressControl.CircularProgressControl progressControl, Button btnAnnuler, Label label, String message = "Chargement...")
+        /// <summary>
+        /// Commence l'affichage des contrôles utilisateur lors du lancement d'une tâche de chargement
+        /// </summary>
+        /// <param name="indicateurProgression">l'indicateur de progression circulaire</param>
+        /// <param name="btnAnnuler">le bouton annuler</param>
+        /// <param name="label">le label contenant le message</param>
+        /// <param name="message">le message à afficher</param>
+        public static void DebutChargement(CircularProgressControl.CircularProgressControl indicateurProgression, Button btnAnnuler, Label label, String message = "Chargement...")
         {
             CompteurChargementActif++;
-            if (progressControl != null)
+            if (indicateurProgression != null)
             {
-                progressControl.Start();
-                progressControl.Visible = true;
+                indicateurProgression.Start();
+                indicateurProgression.Visible = true;
             }
             if (btnAnnuler != null)
             {
@@ -109,17 +116,23 @@ namespace JR_VisiteMedGSB_ClassLibrary
             }
         }
 
-        public static void FinChargement(CircularProgressControl.CircularProgressControl progressControl, Button btnAnnuler, Label label)
+        /// <summary>
+        /// Termine l'affichage des contrôles utilisateur lors de l'arrêt d'une tâche de chargement. Si d'autres tâches sont toujours en cours d'execution, les contrôles sont inchangés
+        /// </summary>
+        /// <param name="indicateurProgression">l'indicateur de progression circulaire</param>
+        /// <param name="btnAnnuler">le bouton annuler</param>
+        /// <param name="label">le label contenant le message</param>
+        public static void FinChargement(CircularProgressControl.CircularProgressControl indicateurProgression, Button btnAnnuler, Label label)
         {
             CompteurChargementActif--;
             if (CompteurChargementActif <= 0)
             {
                 CompteurChargementActif = 0;
 
-                if (progressControl != null)
+                if (indicateurProgression != null)
                 {
-                    progressControl.Stop();
-                    progressControl.Visible = false;
+                    indicateurProgression.Stop();
+                    indicateurProgression.Visible = false;
                 }
                 if (btnAnnuler != null)
                 {

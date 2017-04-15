@@ -32,7 +32,7 @@ namespace JR_VisiteMedGSB
             }
             sourceJetonAnnulation = new CancellationTokenSource();
 
-            JR_GestionForm.DebutChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
+            JR_GestionForm.DebutChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
             LblErreur.Visible = false;
 
             try
@@ -49,7 +49,7 @@ namespace JR_VisiteMedGSB
             }
             finally
             {
-                JR_GestionForm.FinChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement);
+                JR_GestionForm.FinChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement);
             }
         }
 
@@ -61,7 +61,7 @@ namespace JR_VisiteMedGSB
             }
             sourceJetonAnnulation = new CancellationTokenSource();
 
-            JR_GestionForm.DebutChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
+            JR_GestionForm.DebutChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
             LblErreur.Visible = false;
 
             try
@@ -78,7 +78,7 @@ namespace JR_VisiteMedGSB
             }
             finally
             {
-                JR_GestionForm.FinChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement);
+                JR_GestionForm.FinChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement);
             }
         }
         #endregion
@@ -104,7 +104,7 @@ namespace JR_VisiteMedGSB
             #endregion
 
             #region Chargement de la DtgListeCompteRendu
-            JR_GestionForm.DebutChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
+            JR_GestionForm.DebutChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
             try
             {
                 DtgListeCompteRendu.DataSource = await tacheChargementRapport;
@@ -119,7 +119,7 @@ namespace JR_VisiteMedGSB
             }
             finally
             {
-                JR_GestionForm.FinChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement);
+                JR_GestionForm.FinChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement);
             }
             #endregion
 

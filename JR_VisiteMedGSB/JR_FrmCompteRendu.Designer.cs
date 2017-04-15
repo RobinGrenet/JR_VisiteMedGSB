@@ -34,7 +34,7 @@
             this.BtnAnnuler = new System.Windows.Forms.Button();
             this.LblErreur = new System.Windows.Forms.Label();
             this.LblChargement = new System.Windows.Forms.Label();
-            this.ProgressControlVisiteur = new CircularProgressControl.CircularProgressControl();
+            this.IndicateurProgressionVisiteur = new CircularProgressControl.CircularProgressControl();
             this.BtnToutAfficher = new System.Windows.Forms.Button();
             this.MCalCompteRendu = new System.Windows.Forms.MonthCalendar();
             this.GbxListeCompteRendu = new System.Windows.Forms.GroupBox();
@@ -64,7 +64,7 @@
             this.tabConsultation.Controls.Add(this.BtnAnnuler);
             this.tabConsultation.Controls.Add(this.LblErreur);
             this.tabConsultation.Controls.Add(this.LblChargement);
-            this.tabConsultation.Controls.Add(this.ProgressControlVisiteur);
+            this.tabConsultation.Controls.Add(this.IndicateurProgressionVisiteur);
             this.tabConsultation.Controls.Add(this.BtnToutAfficher);
             this.tabConsultation.Controls.Add(this.MCalCompteRendu);
             this.tabConsultation.Controls.Add(this.GbxListeCompteRendu);
@@ -114,20 +114,20 @@
             this.LblChargement.Text = "Chargement...";
             this.LblChargement.Visible = false;
             // 
-            // ProgressControlVisiteur
+            // IndicateurProgressionVisiteur
             // 
-            this.ProgressControlVisiteur.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ProgressControlVisiteur.BackColor = System.Drawing.Color.Transparent;
-            this.ProgressControlVisiteur.Interval = 60;
-            this.ProgressControlVisiteur.Location = new System.Drawing.Point(722, 186);
-            this.ProgressControlVisiteur.MinimumSize = new System.Drawing.Size(28, 28);
-            this.ProgressControlVisiteur.Name = "ProgressControlVisiteur";
-            this.ProgressControlVisiteur.Rotation = CircularProgressControl.CircularProgressControl.Direction.CLOCKWISE;
-            this.ProgressControlVisiteur.Size = new System.Drawing.Size(32, 32);
-            this.ProgressControlVisiteur.StartAngle = 270F;
-            this.ProgressControlVisiteur.TabIndex = 4;
-            this.ProgressControlVisiteur.TickColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
-            this.ProgressControlVisiteur.Visible = false;
+            this.IndicateurProgressionVisiteur.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.IndicateurProgressionVisiteur.BackColor = System.Drawing.Color.Transparent;
+            this.IndicateurProgressionVisiteur.Interval = 60;
+            this.IndicateurProgressionVisiteur.Location = new System.Drawing.Point(722, 186);
+            this.IndicateurProgressionVisiteur.MinimumSize = new System.Drawing.Size(28, 28);
+            this.IndicateurProgressionVisiteur.Name = "IndicateurProgressionVisiteur";
+            this.IndicateurProgressionVisiteur.Rotation = CircularProgressControl.CircularProgressControl.Direction.CLOCKWISE;
+            this.IndicateurProgressionVisiteur.Size = new System.Drawing.Size(32, 32);
+            this.IndicateurProgressionVisiteur.StartAngle = 270F;
+            this.IndicateurProgressionVisiteur.TabIndex = 4;
+            this.IndicateurProgressionVisiteur.TickColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
+            this.IndicateurProgressionVisiteur.Visible = false;
             // 
             // BtnToutAfficher
             // 
@@ -218,7 +218,7 @@
         private System.Windows.Forms.DataGridView DtgListeCompteRendu;
         private System.Windows.Forms.MonthCalendar MCalCompteRendu;
         private System.Windows.Forms.Button BtnToutAfficher;
-        private CircularProgressControl.CircularProgressControl ProgressControlVisiteur;
+        private CircularProgressControl.CircularProgressControl IndicateurProgressionVisiteur;
         private System.Windows.Forms.Label LblChargement;
         private System.Windows.Forms.Label LblErreur;
         private System.Windows.Forms.Button BtnAnnuler;
