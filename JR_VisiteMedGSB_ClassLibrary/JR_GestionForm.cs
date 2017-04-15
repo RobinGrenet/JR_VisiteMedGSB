@@ -88,12 +88,19 @@ namespace JR_VisiteMedGSB_ClassLibrary
             dataGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
-        public static void DebutChargement(CircularProgressControl.CircularProgressControl progressControl, Label label, String message = "Chargement...")
+        private static int CompteurChargementActif = 0;
+
+        public static void DebutChargement(CircularProgressControl.CircularProgressControl progressControl, Button btnAnnuler, Label label, String message = "Chargement...")
         {
+            CompteurChargementActif++;
             if (progressControl != null)
             {
                 progressControl.Start();
                 progressControl.Visible = true;
+            }
+            if (btnAnnuler != null)
+            {
+                btnAnnuler.Visible = true;
             }
             if (label != null)
             {
@@ -102,16 +109,26 @@ namespace JR_VisiteMedGSB_ClassLibrary
             }
         }
 
-        public static void FinChargement(CircularProgressControl.CircularProgressControl progressControl, Label label)
+        public static void FinChargement(CircularProgressControl.CircularProgressControl progressControl, Button btnAnnuler, Label label)
         {
-            if (progressControl != null)
+            CompteurChargementActif--;
+            if (CompteurChargementActif <= 0)
             {
-                progressControl.Stop();
-                progressControl.Visible = false;
-            }
-            if (label != null)
-            {
-                label.Visible = false;
+                CompteurChargementActif = 0;
+
+                if (progressControl != null)
+                {
+                    progressControl.Stop();
+                    progressControl.Visible = false;
+                }
+                if (btnAnnuler != null)
+                {
+                    btnAnnuler.Visible = false;
+                }
+                if (label != null)
+                {
+                    label.Visible = false;
+                }
             }
         }
     }

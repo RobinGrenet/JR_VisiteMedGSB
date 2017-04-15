@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
@@ -121,8 +122,10 @@ namespace JR_VisiteMedGSB_ClassLibrary
         /// </summary>
         /// <param name="nomProc">le nom de la procédure stockée</param>
         /// <returns>une tâche pouvant être attendue contenant une DataTable</returns>
-        public async static Task<DataTable> ExecToDatatableAsync(String nomProc)
+        public async static Task<DataTable> ExecToDatatableAsync(String nomProc, CancellationToken jetonAnnulation = new CancellationToken())
         {
+            jetonAnnulation.ThrowIfCancellationRequested();
+
             DataTable dtResultat = new DataTable();
             using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
             using (SqlCommand commande = new SqlCommand(nomProc, connexion))
@@ -130,10 +133,10 @@ namespace JR_VisiteMedGSB_ClassLibrary
                 commande.CommandType = CommandType.StoredProcedure;
                 try
                 {
-                    await connexion.OpenAsync();
+                    await connexion.OpenAsync(jetonAnnulation);
                     try
                     {
-                        using (SqlDataReader reader = await commande.ExecuteReaderAsync())
+                        using (SqlDataReader reader = await commande.ExecuteReaderAsync(jetonAnnulation))
                         {
                             await Task.Run(() => dtResultat.Load(reader));
                         }
@@ -158,8 +161,10 @@ namespace JR_VisiteMedGSB_ClassLibrary
         /// <param name="dateDebut">la date de début</param>
         /// <param name="dateFin">la date de fin<</param>
         /// <returns>une tâche pouvant être attendue contenant une DataTable</returns>
-        public async static Task<DataTable> ExecToDatatableAsync(String nomProc, KeyValuePair<String, DateTime> dateDebut, KeyValuePair<String, DateTime> dateFin)
+        public async static Task<DataTable> ExecToDatatableAsync(String nomProc, KeyValuePair<String, DateTime> dateDebut, KeyValuePair<String, DateTime> dateFin, CancellationToken jetonAnnulation = new CancellationToken())
         {
+            jetonAnnulation.ThrowIfCancellationRequested();
+
             DataTable dtResultat = new DataTable();
             using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
             using (SqlCommand commande = new SqlCommand(nomProc, connexion))
@@ -169,10 +174,10 @@ namespace JR_VisiteMedGSB_ClassLibrary
                 commande.Parameters.Add(dateFin.Key, SqlDbType.Date).Value = dateFin.Value;
                 try
                 {
-                    await connexion.OpenAsync();
+                    await connexion.OpenAsync(jetonAnnulation);
                     try
                     {
-                        using (SqlDataReader reader = commande.ExecuteReader())
+                        using (SqlDataReader reader = await commande.ExecuteReaderAsync(jetonAnnulation))
                         {
                             await Task.Run(() => dtResultat.Load(reader));
                         }

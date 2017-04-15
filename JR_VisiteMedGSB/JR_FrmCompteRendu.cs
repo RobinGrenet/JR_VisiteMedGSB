@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using JR_VisiteMedGSB_ClassLibrary;
@@ -18,9 +19,78 @@ namespace JR_VisiteMedGSB
             InitializeComponent();
         }
 
+        #region Objets globaux
+        CancellationTokenSource sourceJetonAnnulation;
+        #endregion
+
+        #region Mes méthodes
+        private async Task ChargeListeRapportAsync()
+        {
+            if (sourceJetonAnnulation != null)
+            {
+                sourceJetonAnnulation.Cancel();
+            }
+            sourceJetonAnnulation = new CancellationTokenSource();
+
+            JR_GestionForm.DebutChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
+            LblErreur.Visible = false;
+
+            try
+            {
+                DtgListeCompteRendu.DataSource = await JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRendu", sourceJetonAnnulation.Token);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                LblErreur.Text = ex.Message;
+                LblErreur.Visible = true;
+            }
+            finally
+            {
+                JR_GestionForm.FinChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement);
+            }
+        }
+
+        private async Task ChargeListeRapportAsync(KeyValuePair<String, DateTime> paramDateDebut, KeyValuePair<String, DateTime> paramDateFin)
+        {
+            if (sourceJetonAnnulation != null)
+            {
+                sourceJetonAnnulation.Cancel();
+            }
+            sourceJetonAnnulation = new CancellationTokenSource();
+
+            JR_GestionForm.DebutChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
+            LblErreur.Visible = false;
+
+            try
+            {
+                DtgListeCompteRendu.DataSource = await JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRenduDate", paramDateDebut, paramDateFin, sourceJetonAnnulation.Token);
+            }
+            catch (OperationCanceledException ex)
+            {
+            }
+            catch (Exception ex)
+            {
+                LblErreur.Text = ex.Message;
+                LblErreur.Visible = true;
+            }
+            finally
+            {
+                JR_GestionForm.FinChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement);
+            }
+        }
+        #endregion
+
         #region Procédures évènementielles
         private async void JR_FrmCompteRendu_Load(object sender, EventArgs e)
         {
+            #region Lancement de la tache de chargement
+            sourceJetonAnnulation = new CancellationTokenSource();
+            Task<DataTable> tacheChargementRapport = JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRendu", sourceJetonAnnulation.Token); 
+            #endregion
+
             #region Modification de propriété
             JR_GestionForm.ModificationProprieteCommune(this);
             #endregion
@@ -34,11 +104,13 @@ namespace JR_VisiteMedGSB
             #endregion
 
             #region Chargement de la DtgListeCompteRendu
-            JR_GestionForm.DebutChargement(ProgressControlVisiteur, LblChargement, "Chargement de la liste des rapports...");
-            LblErreur.Visible = false;
+            JR_GestionForm.DebutChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
             try
             {
-                DtgListeCompteRendu.DataSource = await JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRendu");
+                DtgListeCompteRendu.DataSource = await tacheChargementRapport;
+            }
+            catch (OperationCanceledException ex)
+            {
             }
             catch (Exception ex)
             {
@@ -47,7 +119,7 @@ namespace JR_VisiteMedGSB
             }
             finally
             {
-                JR_GestionForm.FinChargement(ProgressControlVisiteur, LblChargement);
+                JR_GestionForm.FinChargement(ProgressControlVisiteur, BtnAnnuler, LblChargement);
             }
             #endregion
 
@@ -64,26 +136,10 @@ namespace JR_VisiteMedGSB
 
         private async void MCalCompteRendu_DateChanged(object sender, DateRangeEventArgs e)
         {
-            JR_GestionForm.DebutChargement(ProgressControlVisiteur, LblChargement, "Chargement de la liste des rapports...");
+            KeyValuePair<String, DateTime> paramDateDebut = new KeyValuePair<String, DateTime>("DateDebut", e.Start);
+            KeyValuePair<String, DateTime> paramDateFin = new KeyValuePair<String, DateTime>("DateFin", e.End);
 
-            KeyValuePair<String, DateTime> paramDateDebut = new KeyValuePair<string, DateTime>("DateDebut", e.Start);
-            KeyValuePair<String, DateTime> paramDateFin = new KeyValuePair<string, DateTime>("DateFin", e.End);
-
-            LblErreur.Visible = false;
-
-            try
-            {
-                DtgListeCompteRendu.DataSource = await JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRenduDate", paramDateDebut, paramDateFin);
-            }
-            catch (Exception ex)
-            {
-                LblErreur.Text = ex.Message;
-                LblErreur.Visible = true;
-            }
-            finally
-            {
-                JR_GestionForm.FinChargement(ProgressControlVisiteur, LblChargement);
-            }
+            await ChargeListeRapportAsync(paramDateDebut, paramDateFin);
         }
 
         private void DtgListeCompteRendu_DataSourceChanged(object sender, EventArgs e)
@@ -93,22 +149,13 @@ namespace JR_VisiteMedGSB
 
         private async void BtnRafraichir_Click(object sender, EventArgs e)
         {
-            JR_GestionForm.DebutChargement(ProgressControlVisiteur, LblChargement, "Chargement de la liste des rapports...");
-            LblErreur.Visible = false;
-            try
-            {
-                DtgListeCompteRendu.DataSource = await JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRendu");
-            }
-            catch (Exception ex)
-            {
-                LblErreur.Text = ex.Message;
-                LblErreur.Visible = true;
-            }
-            finally
-            {
-                JR_GestionForm.FinChargement(ProgressControlVisiteur, LblChargement);
-            }
-        } 
+            await ChargeListeRapportAsync();
+        }
+
+        private void BtnAnnuler_Click(object sender, EventArgs e)
+        {
+            sourceJetonAnnulation.Cancel();
+        }
         #endregion
     }
 }

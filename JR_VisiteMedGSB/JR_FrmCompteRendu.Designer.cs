@@ -31,14 +31,15 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JR_FrmCompteRendu));
             this.tctrlCompteRendu = new System.Windows.Forms.TabControl();
             this.tabConsultation = new System.Windows.Forms.TabPage();
+            this.BtnAnnuler = new System.Windows.Forms.Button();
+            this.LblErreur = new System.Windows.Forms.Label();
+            this.LblChargement = new System.Windows.Forms.Label();
+            this.ProgressControlVisiteur = new CircularProgressControl.CircularProgressControl();
             this.BtnToutAfficher = new System.Windows.Forms.Button();
             this.MCalCompteRendu = new System.Windows.Forms.MonthCalendar();
             this.GbxListeCompteRendu = new System.Windows.Forms.GroupBox();
             this.DtgListeCompteRendu = new System.Windows.Forms.DataGridView();
             this.tabMiseAJour = new System.Windows.Forms.TabPage();
-            this.ProgressControlVisiteur = new CircularProgressControl.CircularProgressControl();
-            this.LblChargement = new System.Windows.Forms.Label();
-            this.LblErreur = new System.Windows.Forms.Label();
             this.tctrlCompteRendu.SuspendLayout();
             this.tabConsultation.SuspendLayout();
             this.GbxListeCompteRendu.SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // tabConsultation
             // 
+            this.tabConsultation.Controls.Add(this.BtnAnnuler);
             this.tabConsultation.Controls.Add(this.LblErreur);
             this.tabConsultation.Controls.Add(this.LblChargement);
             this.tabConsultation.Controls.Add(this.ProgressControlVisiteur);
@@ -73,6 +75,59 @@
             this.tabConsultation.TabIndex = 0;
             this.tabConsultation.Text = "Consultation";
             this.tabConsultation.UseVisualStyleBackColor = true;
+            // 
+            // BtnAnnuler
+            // 
+            this.BtnAnnuler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnAnnuler.Location = new System.Drawing.Point(725, 225);
+            this.BtnAnnuler.MaximumSize = new System.Drawing.Size(75, 23);
+            this.BtnAnnuler.Name = "BtnAnnuler";
+            this.BtnAnnuler.Size = new System.Drawing.Size(75, 23);
+            this.BtnAnnuler.TabIndex = 7;
+            this.BtnAnnuler.Text = "Annuler";
+            this.BtnAnnuler.UseVisualStyleBackColor = true;
+            this.BtnAnnuler.Visible = false;
+            this.BtnAnnuler.Click += new System.EventHandler(this.BtnAnnuler_Click);
+            // 
+            // LblErreur
+            // 
+            this.LblErreur.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.LblErreur.ForeColor = System.Drawing.Color.Red;
+            this.LblErreur.Location = new System.Drawing.Point(722, 264);
+            this.LblErreur.Name = "LblErreur";
+            this.LblErreur.Size = new System.Drawing.Size(227, 253);
+            this.LblErreur.TabIndex = 6;
+            this.LblErreur.Text = "Erreur";
+            this.LblErreur.Visible = false;
+            // 
+            // LblChargement
+            // 
+            this.LblChargement.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.LblChargement.AutoSize = true;
+            this.LblChargement.Location = new System.Drawing.Point(755, 196);
+            this.LblChargement.Name = "LblChargement";
+            this.LblChargement.Size = new System.Drawing.Size(73, 13);
+            this.LblChargement.TabIndex = 5;
+            this.LblChargement.Text = "Chargement...";
+            this.LblChargement.Visible = false;
+            // 
+            // ProgressControlVisiteur
+            // 
+            this.ProgressControlVisiteur.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ProgressControlVisiteur.BackColor = System.Drawing.Color.Transparent;
+            this.ProgressControlVisiteur.Interval = 60;
+            this.ProgressControlVisiteur.Location = new System.Drawing.Point(722, 186);
+            this.ProgressControlVisiteur.MinimumSize = new System.Drawing.Size(28, 28);
+            this.ProgressControlVisiteur.Name = "ProgressControlVisiteur";
+            this.ProgressControlVisiteur.Rotation = CircularProgressControl.CircularProgressControl.Direction.CLOCKWISE;
+            this.ProgressControlVisiteur.Size = new System.Drawing.Size(32, 32);
+            this.ProgressControlVisiteur.StartAngle = 270F;
+            this.ProgressControlVisiteur.TabIndex = 4;
+            this.ProgressControlVisiteur.TickColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
+            this.ProgressControlVisiteur.Visible = false;
             // 
             // BtnToutAfficher
             // 
@@ -133,45 +188,6 @@
             this.tabMiseAJour.Text = "Mise à jour";
             this.tabMiseAJour.UseVisualStyleBackColor = true;
             // 
-            // ProgressControlVisiteur
-            // 
-            this.ProgressControlVisiteur.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ProgressControlVisiteur.BackColor = System.Drawing.Color.Transparent;
-            this.ProgressControlVisiteur.Interval = 60;
-            this.ProgressControlVisiteur.Location = new System.Drawing.Point(722, 186);
-            this.ProgressControlVisiteur.MinimumSize = new System.Drawing.Size(28, 28);
-            this.ProgressControlVisiteur.Name = "ProgressControlVisiteur";
-            this.ProgressControlVisiteur.Rotation = CircularProgressControl.CircularProgressControl.Direction.CLOCKWISE;
-            this.ProgressControlVisiteur.Size = new System.Drawing.Size(32, 32);
-            this.ProgressControlVisiteur.StartAngle = 270F;
-            this.ProgressControlVisiteur.TabIndex = 4;
-            this.ProgressControlVisiteur.TickColor = System.Drawing.Color.FromArgb(((int)(((byte)(58)))), ((int)(((byte)(58)))), ((int)(((byte)(58)))));
-            this.ProgressControlVisiteur.Visible = false;
-            // 
-            // LblChargement
-            // 
-            this.LblChargement.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.LblChargement.AutoSize = true;
-            this.LblChargement.Location = new System.Drawing.Point(755, 196);
-            this.LblChargement.Name = "LblChargement";
-            this.LblChargement.Size = new System.Drawing.Size(73, 13);
-            this.LblChargement.TabIndex = 5;
-            this.LblChargement.Text = "Chargement...";
-            this.LblChargement.Visible = false;
-            // 
-            // LblErreur
-            // 
-            this.LblErreur.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.LblErreur.ForeColor = System.Drawing.Color.Red;
-            this.LblErreur.Location = new System.Drawing.Point(722, 221);
-            this.LblErreur.Name = "LblErreur";
-            this.LblErreur.Size = new System.Drawing.Size(227, 296);
-            this.LblErreur.TabIndex = 6;
-            this.LblErreur.Text = "Erreur";
-            this.LblErreur.Visible = false;
-            // 
             // JR_FrmCompteRendu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -205,5 +221,6 @@
         private CircularProgressControl.CircularProgressControl ProgressControlVisiteur;
         private System.Windows.Forms.Label LblChargement;
         private System.Windows.Forms.Label LblErreur;
+        private System.Windows.Forms.Button BtnAnnuler;
     }
 }
