@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -21,9 +22,10 @@ namespace JR_VisiteMedGSB
 
         #region Objets globaux
         CancellationTokenSource sourceJetonAnnulation;
+        Int32 compteurChargementActifConsultation = 0;
         #endregion
 
-        #region Mes méthodes
+        #region Méthodes
         private async Task ChargeListeRapportAsync()
         {
             if (sourceJetonAnnulation != null)
@@ -32,7 +34,7 @@ namespace JR_VisiteMedGSB
             }
             sourceJetonAnnulation = new CancellationTokenSource();
 
-            JR_GestionForm.DebutChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
+            JR_GestionForm.DebutChargement(IndicateurProgression, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...", ref compteurChargementActifConsultation);
             LblErreur.Visible = false;
 
             try
@@ -49,11 +51,11 @@ namespace JR_VisiteMedGSB
             }
             finally
             {
-                JR_GestionForm.FinChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement);
+                JR_GestionForm.FinChargement(IndicateurProgression, BtnAnnuler, LblChargement, ref compteurChargementActifConsultation);
             }
         }
 
-        private async Task ChargeListeRapportAsync(KeyValuePair<String, DateTime> paramDateDebut, KeyValuePair<String, DateTime> paramDateFin)
+        private async Task ChargeListeRapportAsync(params SqlParameter[] argsProc)
         {
             if (sourceJetonAnnulation != null)
             {
@@ -61,14 +63,14 @@ namespace JR_VisiteMedGSB
             }
             sourceJetonAnnulation = new CancellationTokenSource();
 
-            JR_GestionForm.DebutChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
+            JR_GestionForm.DebutChargement(IndicateurProgression, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...", ref compteurChargementActifConsultation);
             LblErreur.Visible = false;
 
             try
             {
-                DtgListeCompteRendu.DataSource = await JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRenduDate", paramDateDebut, paramDateFin, sourceJetonAnnulation.Token);
+                DtgListeCompteRendu.DataSource = await JR_ProcedureStock.ExecToDatatableAsync("PS_ListeCompteRenduDate", sourceJetonAnnulation.Token, argsProc);
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
             }
             catch (Exception ex)
@@ -78,7 +80,7 @@ namespace JR_VisiteMedGSB
             }
             finally
             {
-                JR_GestionForm.FinChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement);
+                JR_GestionForm.FinChargement(IndicateurProgression, BtnAnnuler, LblChargement, ref compteurChargementActifConsultation);
             }
         }
         #endregion
@@ -104,12 +106,12 @@ namespace JR_VisiteMedGSB
             #endregion
 
             #region Chargement de la DtgListeCompteRendu
-            JR_GestionForm.DebutChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...");
+            JR_GestionForm.DebutChargement(IndicateurProgression, BtnAnnuler, LblChargement, "Chargement de la liste des rapports...", ref compteurChargementActifConsultation);
             try
             {
                 DtgListeCompteRendu.DataSource = await tacheChargementRapport;
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
             }
             catch (Exception ex)
@@ -119,7 +121,7 @@ namespace JR_VisiteMedGSB
             }
             finally
             {
-                JR_GestionForm.FinChargement(IndicateurProgressionVisiteur, BtnAnnuler, LblChargement);
+                JR_GestionForm.FinChargement(IndicateurProgression, BtnAnnuler, LblChargement, ref compteurChargementActifConsultation);
             }
             #endregion
 
@@ -136,8 +138,10 @@ namespace JR_VisiteMedGSB
 
         private async void MCalCompteRendu_DateChanged(object sender, DateRangeEventArgs e)
         {
-            KeyValuePair<String, DateTime> paramDateDebut = new KeyValuePair<String, DateTime>("DateDebut", e.Start);
-            KeyValuePair<String, DateTime> paramDateFin = new KeyValuePair<String, DateTime>("DateFin", e.End);
+            SqlParameter paramDateDebut = new SqlParameter("DateDebut", SqlDbType.Date);
+            SqlParameter paramDateFin = new SqlParameter("DateFin", SqlDbType.Date);
+            paramDateDebut.Value = e.Start;
+            paramDateFin.Value = e.End;
 
             await ChargeListeRapportAsync(paramDateDebut, paramDateFin);
         }

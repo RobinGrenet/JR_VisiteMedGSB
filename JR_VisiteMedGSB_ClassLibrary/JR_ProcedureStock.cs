@@ -44,17 +44,22 @@ namespace JR_VisiteMedGSB_ClassLibrary
         }
 
         /// <summary>
-        /// Exécute la procédure stockée et retoune le résultat dans une DataTable
+        /// Exécute la procédure stockée en lui passant les arguments fournis et retoune le résultat dans une DataTable
         /// </summary>
         /// <param name="nomProc">le nom de la procédure stockée</param>
-        /// <returns>une DataTable contenant le résultat de la requête</returns>
-        public static DataTable ExecToDatatable(String nomProc)
+        /// <param name="argsProc">zero ou plusieurs arguments à passer à la procédure stockée</param>
+        /// <returns></returns>
+        public static DataTable ExecToDatatable(String nomProc, params SqlParameter[] argsProc)
         {
             DataTable dtResultat = new DataTable();
             using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
             using (SqlCommand commande = new SqlCommand(nomProc, connexion))
             {
                 commande.CommandType = CommandType.StoredProcedure;
+                foreach (var param in argsProc)
+                {
+                    commande.Parameters.Add(param);
+                }
                 try
                 {
                     connexion.Open();
@@ -63,82 +68,6 @@ namespace JR_VisiteMedGSB_ClassLibrary
                         using (SqlDataReader reader = commande.ExecuteReader())
                         {
                             dtResultat.Load(reader);
-                        }
-                    }
-                    catch (SqlException e)
-                    {
-                        throw new Exception(erreurRequete + e.Message, e);
-                    }
-                }
-                catch (SqlException e)
-                {
-                    throw new Exception(erreurConnexion + e.Message, e);
-                }
-            }
-            return dtResultat;
-        }
-
-        /// <summary>
-        /// Exécute la procédure stockée et retoune le résultat dans une DataTable, en passant en argument la date de début et de fin
-        /// </summary>
-        /// <param name="nomProc">le nom de la procédure stockée</param>
-        /// <param name="dateDebut">la date de début</param>
-        /// <param name="dateFin">la date de fin</param>
-        /// <returns>une DataTable contenant le résultat de la requête</returns>
-        public static DataTable ExecToDatatable(String nomProc, KeyValuePair<String, DateTime> dateDebut, KeyValuePair<String, DateTime> dateFin)
-        {
-            DataTable dtResultat = new DataTable();
-            using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
-            using (SqlCommand commande = new SqlCommand(nomProc, connexion))
-            {
-                commande.CommandType = CommandType.StoredProcedure;
-                commande.Parameters.Add(dateDebut.Key, SqlDbType.Date).Value = dateDebut.Value;
-                commande.Parameters.Add(dateFin.Key, SqlDbType.Date).Value = dateFin.Value;
-                try
-                {
-                    connexion.Open();
-                    try
-                    {
-                        using (SqlDataReader reader = commande.ExecuteReader())
-                        {
-                            dtResultat.Load(reader);
-                        }
-                    }
-                    catch (SqlException e)
-                    {
-                        throw new Exception(erreurRequete + e.Message, e);
-                    }
-                }
-                catch (SqlException e)
-                {
-                    throw new Exception(erreurConnexion + e.Message, e);
-                }
-            }
-            return dtResultat;
-        }
-
-        /// <summary>
-        /// Une version asynchrone de ExecToDatatable() qui exécute la procédure stockée et retoune le résultat dans une DataTable
-        /// </summary>
-        /// <param name="nomProc">le nom de la procédure stockée</param>
-        /// <returns>une tâche pouvant être attendue contenant une DataTable</returns>
-        public async static Task<DataTable> ExecToDatatableAsync(String nomProc, CancellationToken jetonAnnulation = new CancellationToken())
-        {
-            jetonAnnulation.ThrowIfCancellationRequested();
-
-            DataTable dtResultat = new DataTable();
-            using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
-            using (SqlCommand commande = new SqlCommand(nomProc, connexion))
-            {
-                commande.CommandType = CommandType.StoredProcedure;
-                try
-                {
-                    await connexion.OpenAsync(jetonAnnulation);
-                    try
-                    {
-                        using (SqlDataReader reader = await commande.ExecuteReaderAsync(jetonAnnulation))
-                        {
-                            await Task.Run(() => dtResultat.Load(reader), jetonAnnulation);
                         }
                     }
                     catch (SqlException e)
@@ -158,10 +87,10 @@ namespace JR_VisiteMedGSB_ClassLibrary
         /// Une version asynchrone de ExecToDatatable() qui exécute la procédure stockée et retoune le résultat dans une DataTable, en passant en argument la date de début et de fin
         /// </summary>
         /// <param name="nomProc">le nom de la procédure stockée</param>
-        /// <param name="dateDebut">la date de début</param>
-        /// <param name="dateFin">la date de fin<</param>
+        /// <param name="jetonAnnulation">le jeton d'annulation</param>
+        /// <param name="argsProc">zero ou plusieurs arguments à passer à la procédure stockée</param>
         /// <returns>une tâche pouvant être attendue contenant une DataTable</returns>
-        public async static Task<DataTable> ExecToDatatableAsync(String nomProc, KeyValuePair<String, DateTime> dateDebut, KeyValuePair<String, DateTime> dateFin, CancellationToken jetonAnnulation = new CancellationToken())
+        public async static Task<DataTable> ExecToDatatableAsync(String nomProc, CancellationToken jetonAnnulation = new CancellationToken(), params SqlParameter[] argsProc)
         {
             jetonAnnulation.ThrowIfCancellationRequested();
 
@@ -170,8 +99,10 @@ namespace JR_VisiteMedGSB_ClassLibrary
             using (SqlCommand commande = new SqlCommand(nomProc, connexion))
             {
                 commande.CommandType = CommandType.StoredProcedure;
-                commande.Parameters.Add(dateDebut.Key, SqlDbType.Date).Value = dateDebut.Value;
-                commande.Parameters.Add(dateFin.Key, SqlDbType.Date).Value = dateFin.Value;
+                foreach (var param in argsProc)
+                {
+                    commande.Parameters.Add(param);
+                }
                 try
                 {
                     await connexion.OpenAsync(jetonAnnulation);
@@ -264,7 +195,7 @@ namespace JR_VisiteMedGSB_ClassLibrary
         /// </summary>
         /// <param name="nomProc">le nom de la procédure stockée</param>
         /// <returns>le nombre de lignes affectées</returns>
-        public static int Exec(String nomProc)
+        public static int Exec(String nomProc, params SqlParameter[] argsProc)
         {
             int nbLignes = 0;
             using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
@@ -296,19 +227,26 @@ namespace JR_VisiteMedGSB_ClassLibrary
         /// </summary>
         /// <param name="nomProc">le nom de la procédure stockée</param>
         /// <returns>une tâche pouvant être attendue contenant un entier</returns>
-        public async static Task<int> ExecAsync(String nomProc)
+        public async static Task<int> ExecAsync(String nomProc, CancellationToken jetonAnnulation = new CancellationToken(), params SqlParameter[] argsProc)
         {
+            jetonAnnulation.ThrowIfCancellationRequested();
+
             int nbLignes = 0;
+
             using (SqlConnection connexion = new SqlConnection(ConfigurationManager.ConnectionStrings["CS_VisiteMedGSB"].ConnectionString))
             using (SqlCommand commande = new SqlCommand(nomProc, connexion))
             {
                 commande.CommandType = CommandType.StoredProcedure;
+                foreach (var param in argsProc)
+                {
+                    commande.Parameters.Add(param);
+                }
                 try
                 {
-                    await connexion.OpenAsync();
+                    await connexion.OpenAsync(jetonAnnulation);
                     try
                     {
-                        nbLignes = await commande.ExecuteNonQueryAsync();
+                        nbLignes = await commande.ExecuteNonQueryAsync(jetonAnnulation);
                     }
                     catch (SqlException e)
                     {

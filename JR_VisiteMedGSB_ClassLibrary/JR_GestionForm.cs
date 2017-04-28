@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Threading;
 
 namespace JR_VisiteMedGSB_ClassLibrary
 {
@@ -88,8 +89,6 @@ namespace JR_VisiteMedGSB_ClassLibrary
             dataGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
-        private static int CompteurChargementActif = 0;
-
         /// <summary>
         /// Commence l'affichage des contrôles utilisateur lors du lancement d'une tâche de chargement
         /// </summary>
@@ -97,9 +96,10 @@ namespace JR_VisiteMedGSB_ClassLibrary
         /// <param name="btnAnnuler">le bouton annuler</param>
         /// <param name="label">le label contenant le message</param>
         /// <param name="message">le message à afficher</param>
-        public static void DebutChargement(CircularProgressControl.CircularProgressControl indicateurProgression, Button btnAnnuler, Label label, String message = "Chargement...")
+        /// <param name="compteurChargementActif">le compteur de chargements actifs</param>
+        public static void DebutChargement(CircularProgressControl.CircularProgressControl indicateurProgression, Button btnAnnuler, Label label, String message, ref int compteurChargementActif)
         {
-            CompteurChargementActif++;
+            Interlocked.Increment(ref compteurChargementActif);
             if (indicateurProgression != null)
             {
                 indicateurProgression.Start();
@@ -122,12 +122,13 @@ namespace JR_VisiteMedGSB_ClassLibrary
         /// <param name="indicateurProgression">l'indicateur de progression circulaire</param>
         /// <param name="btnAnnuler">le bouton annuler</param>
         /// <param name="label">le label contenant le message</param>
-        public static void FinChargement(CircularProgressControl.CircularProgressControl indicateurProgression, Button btnAnnuler, Label label)
+        /// <param name="compteurChargementActif">le compteur de chargements actifs</param>
+        public static void FinChargement(CircularProgressControl.CircularProgressControl indicateurProgression, Button btnAnnuler, Label label, ref int compteurChargementActif)
         {
-            CompteurChargementActif--;
-            if (CompteurChargementActif <= 0)
+            Interlocked.Decrement(ref compteurChargementActif);
+            if (compteurChargementActif <= 0)
             {
-                CompteurChargementActif = 0;
+                compteurChargementActif = 0;
 
                 if (indicateurProgression != null)
                 {
